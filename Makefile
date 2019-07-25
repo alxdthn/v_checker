@@ -6,25 +6,36 @@
 #    By: nalexand <nalexand@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/07/21 13:47:17 by nalexand          #+#    #+#              #
-#    Updated: 2019/07/21 19:23:33 by nalexand         ###   ########.fr        #
+#    Updated: 2019/07/25 17:50:37 by nalexand         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-NAME = v_checker
-
-LIBFT = ../libft/
-LIBFTPRINTF = ../libft/ft_printf/
-
+C_FLAGS = -g
+NAME = run_test
+LIBFT = ./libftprintf/libftprintf.a
+SRC_DIR = src/
+OBJ_DIR = obj/
+HEADER = -I libftprintf/includes -I includes
+HEAD = includes/v_checker.h
 SRC = valid_checker.c
-
-HEADER = -I $(LIBFT)includes -I $(LIBFTPRINTF)includes
+OBJ = $(addprefix $(OBJ_DIR), $(patsubst %.c, %.o, $(SRC)))
 
 all: $(NAME)
 
-$(NAME):
-	gcc -g $(SRC) -o $(NAME) $(LIBFT)libft.a $(LIBFTPRINTF)libftprintf.a $(HEADER)
+$(NAME): $(LIBFT) $(OBJ)
+	gcc $(C_FLAGS) -o $(NAME) $^ $(LIBFT)
+	@mkdir -p tmp
+
+$(OBJ_DIR)%.o: $(SRC_DIR)%.c $(HEAD)
+	@mkdir -p $(OBJ_DIR)
+	gcc $(C_FLAGS) -c $< -o $@ $(HEADER)
+
+$(LIBFT):
+	make -C ./libftprintf/
 
 clean:
+	rm -rf *.dSYM
+	rm -f *.txt
 	rm -f $(NAME)
 
 re: clean all
